@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SIM Gmail Converter</title>
+  <style>
+    body{font-family:Arial, sans-serif;background:#f6f8fa;padding:32px;display:flex;justify-content:center}
+    .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.1);width:100%;max-width:600px}
+    h1{margin:0 0 14px;font-size:20px}
+    .field{margin-bottom:14px}
+    label{display:block;font-size:14px;margin-bottom:6px;color:#475569}
+    input[type=text]{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:14px}
+    .error{color:#dc2626;font-size:14px;margin-top:6px;display:none}
+    .controls{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .btn{padding:8px 14px;border-radius:6px;border:0;cursor:pointer;font-size:14px;font-weight:600}
+    .btn-clear{background:#ef4444;color:#fff}
+    .btn-copy{background:#16a34a;color:#fff}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>SIM to Gmail Converter</h1>
+    <div class="field">
+      <label for="sim">Enter SIM Number</label>
+      <input id="sim" type="text" placeholder="e.g. 8901260428752121078F" />
+      <div id="error" class="error">Error: SIM number must end with an "F" (uppercase or lowercase).</div>
+    </div>
+    <div class="field">
+      <label>Converted Gmail Address</label>
+      <input id="gmail" type="text" readonly />
+    </div>
+    <div class="controls">
+      <button id="copyGmail" class="btn btn-copy" type="button">Copy Gmail</button>
+      <button id="clearAll" class="btn btn-clear" type="button">Clear All</button>
+    </div>
+  </main>
+
+  <script>
+    const simInput = document.getElementById('sim');
+    const gmailOutput = document.getElementById('gmail');
+    const errorMsg = document.getElementById('error');
+    const clearBtn = document.getElementById('clearAll');
+    const copyBtn = document.getElementById('copyGmail');
+
+    simInput.addEventListener('input', ()=>{
+      const value = simInput.value.trim();
+      if(!value) {
+        gmailOutput.value = '';
+        errorMsg.style.display = 'none';
+        return;
+      }
+      // check if last char is F or f
+      if(/f$/i.test(value)){
+        gmailOutput.value = value + '@gmail.com';
+        errorMsg.style.display = 'none';
+      } else {
+        gmailOutput.value = '';
+        errorMsg.style.display = 'block';
+      }
+    });
+
+    clearBtn.addEventListener('click', ()=>{
+      simInput.value = '';
+      gmailOutput.value = '';
+      errorMsg.style.display = 'none';
+      simInput.focus();
+    });
+
+    copyBtn.addEventListener('click', ()=>{
+      if(gmailOutput.value){
+        navigator.clipboard.writeText(gmailOutput.value)
+          .then(()=>{
+            copyBtn.textContent = 'Copied!';
+            setTimeout(()=>{ copyBtn.textContent = 'Copy Gmail'; }, 1500);
+          })
+          .catch(()=>{
+            alert('Copy failed. Please copy manually.');
+          });
+      } else {
+        alert('No Gmail address to copy.');
+      }
+    });
+  </script>
+</body>
+</html>
